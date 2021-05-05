@@ -33,7 +33,10 @@ def markov_model():
     probTables = generate_model(scores, dicts, args)
     endElements, primeKeys, primeNoteSets = get_end_elements(dicts, args)
 
-    predictions = predict_sequences(probTables, endElements, dicts, primeKeys, primeNoteSets, args)
+    if args.beamsearch:
+        predictions = predict_sequences_beamsearch(probTables, endElements, dicts, primeKeys, args) 
+    else:
+        predictions = predict_sequences(probTables, endElements, dicts, primeKeys, primeNoteSets, args)
     score = evaluate(predictions, args)
     print("The final score is ", score)
 
@@ -44,6 +47,7 @@ def get_args():
     parser.add_argument("--music-type", type=str, default = "mono", choices=["poly", "mono"], help="Type of music that will be used.  Choices includes 'mono' for monophonic music and 'poly' for polyphonic music")
     parser.add_argument("--transpose", type=str, default=None, choices=['all', 'C'], help="Transpose data into all twelve keys for training when option 'all' is specified, and tranpose to either C major or c minor when 'C'  option is specified")
     parser.add_argument("--constrained", default = False, action = "store_true", help="Constrained inference.  Only notes in the prime sequence will be used for the prediction sequence")
+    parser.add_argument("--beamsearch", default = None, type=int, help="Beamsearch is used during inference.  The size of the beam must be specified")
     args = parser.parse_args()
     return args
 
@@ -174,6 +178,9 @@ def generate_model(scores, dicts, args):
                             durations[priorDur][currentDur] +=1
                             priorNote = currentNote
                             priorDur = currentDur
+        
+        notes = notes / notes.sum(axis=1, keepdims=True)
+        durations = durations / durations.sum(axis=1, keepdims=True)
 
     #2nd order markov chain
     else:
@@ -262,8 +269,8 @@ def generate_model(scores, dicts, args):
                             priorNote = currentNote
                             priorDur = currentDur
 
-    notes = notes / notes.sum(axis=1, keepdims=True)
-    durations = durations / durations.sum(axis=1, keepdims=True)
+        notes = notes / notes.sum(axis=2, keepdims=True)
+        durations = durations / durations.sum(axis=2, keepdims=True)
     
     return (notes, durations)
 
@@ -408,6 +415,8 @@ def predict_sequences(probTables, endElements, dicts, primeKeys, primeNoteSets, 
                 priorDur = predDur
             else:
                 #predNote = np.argmax(noteProbs[priorNotes[0]][priorNotes[1]])
+                print("Prior Note 0: ", priorNote[0])
+                print("Prior Note 1: ", priorNote[1])
                 predNote = np.random.choice(noteProbs.shape[0], p=noteProbs[priorNote[0]][priorNote[1]])
                 #predDur = np.argmax(durProbs[priorDurs[0]][priorDurs[1]])
                 predDur = np.random.choice(durProbs.shape[0], p=durProbs[priorDur[0]][priorDur[1]])
@@ -562,8 +571,8 @@ def create_midis_poly(targetSequences, args):
             if targetNotes[i][j] != "128":
                 pitches = targetNotes[i][j].split(".")
                 newChord = chord.Chord()
-                for pitch in pitches:
-                    newChord.add(int(pitch))
+                for p in pitches:
+                    newChord.add(int(p))
                 try:
                     newChord.duration.quarterLength = targetDurations[i][j]
                 except:
@@ -607,9 +616,9 @@ def create_midis_poly(targetSequences, args):
 
     return notes, offsets, durations
 
-def predict_sequences_beamsearch(probTables, endElements, dicts, primeKeys, mostCommonNote, args):
+def predict_sequences_beamsearch(probTables, endElements, dicts, primeKeys, args):
     print("Generating notes for predictions using beam search")
-    k = args.beam_search #length of beam search
+    k = args.beamsearch #length of beam search
     
     #unpack items
     noteProbs, durProbs = probTables
@@ -677,11 +686,12 @@ def predict_sequences_beamsearch(probTables, endElements, dicts, primeKeys, most
             offset_seq.append(offset)
         predictedOffsets.append(offset_seq)
 
-    if args.transpose ==  "C":
+    if args.music_type == "poly":
+        return create_midis_poly((predictedNotes, predictedDurs, primeKeys), args)
+    elif args.music_type == "mono" and  args.transpose == "C":
         return create_midis((predictedNotes, predictedDurs, primeKeys), args)
     else:
         return (predictedNotes, predictedDurs, predictedOffsets)
-
 
 if __name__ == '__main__':
     markov_model()

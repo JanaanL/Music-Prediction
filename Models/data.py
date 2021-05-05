@@ -8,7 +8,16 @@ import math
 import random
 import utils
 import predict
+import argparse
 from music21 import converter, note, duration, chord, stream, interval, pitch, chord
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--music-type", type=stre, default="mono", choices=["mono","poly"], help="Type of music that will be processed.  Choices include 'mono' for monophonic music and 'poly' for polyphonic music")
+    parser.add_argument("--dict-type", type=str, default="single", choices=["single","combination"], help="Type of dictionary to be created.  Choices include 'single' for either a single note or duration dictionary or 'combination' for a tuple combination of notes and durations.")
+    args = pareser.parse_args()
+    return args
+
 
 def split_data(datasets, split=0.1):
 
@@ -46,7 +55,7 @@ def print_filenames(datasets):
             print(testList)
             print()
 
-def create_dicts(datasets, data_type="mono", dict_type = "single", transpose=False):
+def create_dicts(datasets, args):
     """
     Creates dictionaries for input.  
     Two different types of datasets: ["mono", "poly"]
@@ -84,8 +93,8 @@ def create_dicts(datasets, data_type="mono", dict_type = "single", transpose=Fal
             except:
                 print("File would not parse correctly: ", fname)
             
-        if data_type == "mono":
-            if dict_type == "single":
+        if args.music_type == "mono":
+            if args.dict_type == "single":
                 durations = set()
                 # Extract notes, chords, durations, and keys
                 for i, song in enumerate(primeScores):
@@ -102,7 +111,7 @@ def create_dicts(datasets, data_type="mono", dict_type = "single", transpose=Fal
                     pickle.dump(durationToInt, filepath)
                 print("Saving duration diction to ", dataPath)
             
-            elif dict_type == "combination":
+            elif args.dict_type == "combination":
                 notesAndDurations = set()        
                 
                 # Extract notes, chords, durations, and keys
@@ -126,7 +135,7 @@ def create_dicts(datasets, data_type="mono", dict_type = "single", transpose=Fal
         
         #Data Type is Polyphonic -- Parse Chords
         else:
-            if dict_type == "single":
+            if args.dict_type == "single":
                 notes = set()
                 durations = set()
                 # Extract notes, chords, durations, and keys
@@ -190,8 +199,9 @@ def create_dicts(datasets, data_type="mono", dict_type = "single", transpose=Fal
                 print("Saving notes and durations dictionary to ", dataPath)
 
 def test_true_scores(dataPath):
-    args = utils.get_args()
-        
+    """
+    Function that tests the scores on the true data (as a sanity check)
+    """
     with open(dataPath + 'testList', 'rb') as filepath:
         testList = pickle.load(filepath)
     
@@ -222,14 +232,20 @@ def test_true_scores(dataPath):
         
 
 if __name__ == '__main__':
-    small = "../Data/mono_small/"
-    medium = "../Data/mono_medium/"
-    large = "../Data/mono_large/"
+    args = get_args()
+    if args.music_type == "mono":
+        small = "../Data/mono_small/"
+        medium = "../Data/mono_medium/"
+        #large = "../Data/mono_large/"
+    else:
+        small = "../Data/poly_small/"
+        medium = "../Data/poly_medium/"
+        #large = "../Data/poly_large/"
     
     datasets = [small, medium]
     split_data(datasets)
     print_filenames(datasets)
-    create_dicts(datasets, data_type = "mono", dict_type = "single", transpose=False)
+    create_dicts(datasets, args)
     #test_true_scores(small)
 
     
