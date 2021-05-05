@@ -6,6 +6,10 @@ Details about this challenge can be found here:  https://www.music-ir.org/mirex/
 This project aimed to take an excerpt of music as input and predict a continuation of the excerpt.  
 Different music types and input feature representations were used with various learning models to compare the differences in prediction and learning.
 
+The following libraries are needed to run the files in this project:
+Music21
+Keras 2.4.3
+TensorFlow 2.3.1
 
 
 To prepare the data for this project, run the data.py file.  An example of a command-line argument to run the data file on the monophonic datasets would be:
@@ -45,17 +49,30 @@ Or it can be run as two separate LSTM models, one each for the notes and duratio
 An example of a command-line argument to run a multivariate LSTM model on the monophonic dataset would be:
 >> python lstm.py --data-file "../Data/mono_medium/" --name "lstm-model1"
 
-For prediction and scoring the LSTM model, the predict.py file must be run.  Again, there are several inference options that can be used.  Please see the help menu for more details.
-An example of a command-line argument to predict and score the model above would be:
+For prediction and scoring the LSTM model, the predict.py file must be run.  Again, there are several inference options that can be used.  Please see the help menu for more details.  An example of a command-line argument to predict and score the model above would be:
 >> python predict.py --data-file "../Data/mono_medium/" --saved-model "data/models/lstm-model1"
 
 There are several variants of the LSTM model that take different input feature representations.  These include a combination feature representation which is tuples of 
 notes and durations.  The other input feature representation is step sequences of intervals.  This represents the interval differences in the sequence of pitches.
 First, to run the combinataion features LSTM model, the data.py file must have been run to create an appropriate dictionary for the combined feature representation.
 Please see the data.py help menu for instructions.  An example command-line argument for this LSTM model would be:
->> python lstm_combined.py --data/file "../Data/mono_medium/" --name "lstm-combined"
+>> python lstm_combined.py --data-file "../Data/mono_medium/" --name "lstm-combined"
 
 For prediction of this model, the following command-line argument would be:
 >> python predict_combined.py --data-file "../Data/mono_medium/" --saved-model "data/models/lstm-combined"
+
+The other LSTM model uses interval changes and durations as the feature inputs.  An example of a command-lind argument to use this model would be:
+>> python lstm_step.py --data-file "../Data/mono_medium" --name "lstm-step"
+
+For prediction using this model, the following command-line argument would be:
+>> python predict_step.py --data-file "../Data/mono_medium/" --saved-model "data/models/lstm-step"
+
+LSTM Encoder-Decoder Model
+The last model is an LSTM encoder-decoder model.  It can be used on only the monophonic music.  It is a multivariate model with two separate inputs:  notes
+and durations.  See the help menu for more options.  A sample command-line argument to run this model on the medium-sized dataset would be:
+>> python encoder_model.py --data-file "../Data/mono_medium/" --name "s2s"
+
+And for prediction:
+>> python predict_encoder.py --data-file "../Data/mono_medium/" --saved-model "data/models/s2s"
 
 
