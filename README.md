@@ -3,8 +3,7 @@
 This is my class project for CS6355 Structured Prediction Spring 2021 at the University of Utah.
 This project involves music prediction and is structured after the Patterns for Prediction challenge of the 2020 Mirex Challenge.
 Details about this challenge can be found here:  https://www.music-ir.org/mirex/wiki/2020:Patterns_for_Prediction.
-This project aimed to take an excerpt of music as input and predict a continuation of the excerpt.  
-Different music types and input feature representations were used with various learning models to compare the differences in prediction and learning.
+This project aimed to take an excerpt of music as input and predict a continuation of the excerpt.  Different music types and input feature representations were used with various learning models to compare the differences in prediction and learning.
 
 The following libraries are needed to run the files in this project:
 Music21
@@ -33,6 +32,7 @@ An example of a command-line argument to run the baseline file on the monophonic
 This project involves three different models:  A Markov chain, an LSTM model, and an LSTM Encoder-Decoder model.
 
 Markov Chain
+
 The Markov model can be either a first-order or a second-order markov chain.  The input data can be transposed to the key of C, for better consistency of
 the input data.  The output sequence is then transponsed back to the original key.  This is indicated with the --transpose "C" command-line argument.  The inference can 
 also be constrained to only include notes that are found in the prime sequence.  This is indicated with the --constrained command-line argument.  Both the 
@@ -43,6 +43,7 @@ An example of a command-line argument to run a first-order Markov model on the m
 >> python markov_model.py --data-file "../Data/mono_medium/" --transpose "C" --constrained
 
 LSTM Model
+
 The LSTM model can be run on both the monophonic and the polyphonic datasets.  It can also be run as a multivariate model with notes and durations as two separate inputs.
 Or it can be run as two separate LSTM models, one each for the notes and durations.  For a list of the different options, please look at the help menu.
 
@@ -68,6 +69,7 @@ For prediction using this model, the following command-line argument would be:
 >> python predict_step.py --data-file "../Data/mono_medium/" --saved-model "data/models/lstm-step"
 
 LSTM Encoder-Decoder Model
+
 The last model is an LSTM encoder-decoder model.  It can be used on only the monophonic music.  It is a multivariate model with two separate inputs:  notes
 and durations.  See the help menu for more options.  A sample command-line argument to run this model on the medium-sized dataset would be:
 >> python encoder_model.py --data-file "../Data/mono_medium/" --name "s2s"
