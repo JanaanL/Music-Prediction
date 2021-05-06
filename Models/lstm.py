@@ -266,11 +266,11 @@ def train_model(model, data, args, batch_size=64, type=None):
     trainNotes, targetNotes, trainDurations, targetDurations = data
 
     if type == "notes":
-        filepath = "tmp/checkpoints/lstm/7/notes/weights.{epoch:02d}.hdf5"
+        filepath = "tmp/checkpoints/notes/weights.{epoch:02d}.hdf5"
     elif type == "durations":
-        filepath = "tmp/checkpoints/lstm/7/durations/weights.{epoch:02d}.hdf5"
+        filepath = "tmp/checkpoints/durations/weights.{epoch:02d}.hdf5"
     else:
-        filepath = "tmp/checkpoints/lstm/test/weights.{epoch:02d}.hdf5"
+        filepath = "tmp/checkpoints/weights.{epoch:02d}.hdf5"
         
     checkpoint = ModelCheckpoint(
         filepath,
