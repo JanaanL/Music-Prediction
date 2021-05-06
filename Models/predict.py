@@ -480,6 +480,7 @@ def evaluate(notePredictions, offsetPredictions, durationPredictions, fileNames,
     The total maximum score is 1.0.
     """
     print("Calculating scores")
+    numSongs = len(notePredictions)
     totalScores = np.zeros(numSongs)
     totalCScores = np.zeros(numSongs)
     totalPScores = np.zeros(numSongs)
