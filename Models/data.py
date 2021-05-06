@@ -13,9 +13,9 @@ from music21 import converter, note, duration, chord, stream, interval, pitch, c
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--music-type", type=stre, default="mono", choices=["mono","poly"], help="Type of music that will be processed.  Choices include 'mono' for monophonic music and 'poly' for polyphonic music")
+    parser.add_argument("--music-type", type=str, default="mono", choices=["mono","poly"], help="Type of music that will be processed.  Choices include 'mono' for monophonic music and 'poly' for polyphonic music")
     parser.add_argument("--dict-type", type=str, default="single", choices=["single","combination"], help="Type of dictionary to be created.  Choices include 'single' for either a single note or duration dictionary or 'combination' for a tuple combination of notes and durations.")
-    args = pareser.parse_args()
+    args = parser.parse_args()
     return args
 
 
