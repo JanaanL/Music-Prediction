@@ -115,7 +115,6 @@ def process_data(args, notesToInt, durationsToInt):
     print(trainFileNames[0])
     notes = [[] for _ in scores]
     durations = [[] for _ in scores]
-    keys = []
   
     if args.music_type == "mono":
         # Extract notes, chords, durations, and keys
@@ -123,7 +122,6 @@ def process_data(args, notesToInt, durationsToInt):
         for i, song in enumerate(scores):
             if i % 10 == 0:
                 print ("Processing song no ", i)
-            keys.append(str(song.analyze('key')))
             for element in song.flat:
                 if isinstance(element, note.Note):
                     notes[i].append(element.pitch.midi)
@@ -139,7 +137,6 @@ def process_data(args, notesToInt, durationsToInt):
         for i, song in enumerate(scores):
             if i % 10 == 0:
                 print ("Processing song no ", i)
-            keys.append(str(song.analyze('key')))
             newStream = stream.Stream()
             for part in song.parts:
                 newStream.mergeElements(part)
