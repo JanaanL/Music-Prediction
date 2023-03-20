@@ -26,8 +26,7 @@ Three different types of baselines are calculated:  *random, sampled, and sample
 
 *Random* baseline sequences are sequences of notes/chords and durations chosen randomly from the training set.
 *Sampled* sequences are sequences of notes/chords that are sampled using the distribution of notes/chords from the training set.
-*Samples with constraints* sequences are sequences of notes/chords that are sampled using the distribution of notes/chords from the training set.  
-However, the sampled note must be in the prime sequence of the song that is predicted.  If the predicted note is not in the prime, another note is sampled 
+*Samples with constraints* sequences are sequences of notes/chords that are sampled using the distribution of notes/chords from the training set.  However, the sampled note must be in the prime sequence of the song that is predicted.  If the predicted note is not in the prime, another note is sampled 
 until one is found that is in the sequence.
 
 An example of a command-line argument to run the baseline file on the monophonic datasets would be:
